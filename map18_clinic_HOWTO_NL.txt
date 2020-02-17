@@ -41,9 +41,9 @@ C. CONVERSIE DICOM NAAR NIfTI
 MAP18 Analyse
 ==============================================================================================
 1.	Selecteer/Deselecteer 'Test run' naar keuze
-2. Klik 'Batch analysis'
-3. Selecteer de patienten (enkel op patientennaam, Shift of Ctrl + Linkermuis voor meerdere selecties)
-4. Klik 'Open'
-5. Controleer de configuratie
-6. Klik 'Ok'
-7. De analyse start, output in het Matlab venster
+2. 	Klik 'Batch analysis'
+3. 	Selecteer de patienten (enkel op patientennaam, Shift of Ctrl + Linkermuis voor meerdere selecties)
+4. 	Klik 'Open'
+5. 	Controleer de configuratie in het Matlab venster
+6. 	Klik 'Ok'
+7. 	De analyse start, output in het Matlab venster

@@ -1,0 +1,49 @@
+==============================================================================================
+A. Copy from DICOM
+==============================================================================================
+1. 	Create a folder per subject 
+	<path to subjects folder><subject name>\Dicom
+
+2. 	copy the DICOM files to <path to subjects folder><subject name>\Dicom
+	
+==============================================================================================
+B. Start the software
+==============================================================================================
+1. 	Start Matlab
+
+2. 	Add the script to the Matlab path
+		addpath('<path to map18_clinic folder>')
+	or
+		Browse to <path to map18_clinic folder>
+		Hover on folder map18_clinic and right-click
+		Select 'Add to Path'->'Selected Folders'
+
+3. 	Start the GUI
+		map18_clinic
+	or
+		Select map18_clinic
+		Right-click
+		Select 'Run'
+	of
+		Select map18_clinic
+		Press F9
+
+==============================================================================================
+C. CONVERSION FROM DICOM TO NIfTI
+==============================================================================================
+1.	Select/Deselect 'Delete files' as desired
+2.	Click 'Prepare data'
+3.	Select the subjects (just subject name, use Shift or Ctrl + left-click for multiple selections)
+4.	Click 'Open'
+5.	The conversion starts, output in the Matlab command window
+
+==============================================================================================
+MAP18 Analysis
+==============================================================================================
+1. 	Select/Deselect 'Test run' as desired
+2. 	Click 'Batch analysis'
+3. 	Select the subjects (just subject name, use Shift or Ctrl + left-click for multiple selections)
+4. 	Click 'Open'
+5. 	Check the configuration in the Matlab command window
+6. 	Click 'Ok'
+7. 	The analysis starts, output in the Matlab command window
