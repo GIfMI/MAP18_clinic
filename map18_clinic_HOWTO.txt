@@ -1,0 +1,49 @@
+==============================================================================================
+A. Kopiëren van DICOM
+==============================================================================================
+1. 	Maak per patient 
+	D:\Projects\MAP18\Patienten\<patient naam>\Dicom
+
+2. 	Kopieer DICOM files naar D:\Projects\MAP18\Patienten\<patient naam>\Dicom
+	
+==============================================================================================
+B. Opstarten software
+==============================================================================================
+1. 	Op Bureaublad -> Start Matlab
+
+2. 	Toevoegen van het script aan het Matlab path
+		addpath('D:\Projects\MAP18\Patienten\code\map18_clinic')
+	of
+		Browse naar D:\Projects\MAP18\code\map18_clinic
+		Zweef op map18_clinic en klik rechtermuis
+		Selecteer 'Add to Path'->'Selected Folders'
+
+3. 	Start GUI op
+		map18_clinic
+	of
+		Selecteer map18_clinic
+		Klik rechtermuis
+		Selecteer 'Run'
+	of
+		Selecteer map18_clinic
+		Druk op F9
+
+==============================================================================================
+C. CONVERSIE DICOM NAAR NIfTI
+==============================================================================================
+1.	Selecteer/Deselecteer 'Delete files' naar keuze
+2.	Klik 'Prepare data'
+3.	Selecteer de patienten (enkel op patientennaam, Shift of Ctrl + Linkermuis voor meerdere selecties)
+4.	Klik 'Open'
+5.	De conversie start, output in het Matlab venster
+
+==============================================================================================
+MAP18 Analyse
+==============================================================================================
+1.	Selecteer/Deselecteer 'Test run' naar keuze
+2. Klik 'Batch analysis'
+3. Selecteer de patienten (enkel op patientennaam, Shift of Ctrl + Linkermuis voor meerdere selecties)
+4. Klik 'Open'
+5. Controleer de configuratie
+6. Klik 'Ok'
+7. De analyse start, output in het Matlab venster
