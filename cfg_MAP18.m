@@ -19,7 +19,7 @@ function map18_cfg = cfg_MAP18()
     %    === MAP18 SPECIFIC ===
     %    --- MAP18 LOCATION
     %    map18_cfg.map18.path = absolute path to the MAP18 installation 
-	%	     (<PATH to MAP18>\MATLAB-Programs\MAP18_for_SPM12\MAP18_Program')
+	%	     (<PATH to MAP18>\MATLAB-Programs')
     %
     %    --- MAP18 PARAMETERS
     %    map18_cfg.map18.param.norm = normal database (default: 'Gent_PrismaFit_T1')
@@ -59,7 +59,7 @@ function map18_cfg = cfg_MAP18()
     
     % === MAP18 SPECIFIC ===
     % --- MAP18 LOCATION
-    map18_cfg.map18.path = 'D:\Software\MAP18\MATLAB-Programs\MAP18_for_SPM12\MAP18_Program';
+    map18_cfg.map18.path = 'D:\Software\MAP18\MATLAB-Programs';
     
     % --- MAP18 PARAMETERS
     map18_cfg.map18.param.norm = 'Gent_PrismaFit_T1';

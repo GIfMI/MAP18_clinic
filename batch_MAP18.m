@@ -23,7 +23,7 @@ function batch_MAP18(varargin)
     %       if empty, the default provided cfg_MAP18 is run
     %             map18_cfg.subject_path = absolute path to subject folder
     %             map18_cfg.map18.path = absolute path to the MAP18 installation 
-	%			      (<PATH to MAP18>\MATLAB-Programs\MAP18_for_SPM12\MAP18_Program')
+	%			      (<PATH to MAP18>\MATLAB-Programs')
     %             map18_cfg.map18.param.norm = normal database (default: 'Gent_PrismaFit_T1')
     %             map18_cfg.map18.test_run = do a test_run (default: false)
     %
@@ -83,7 +83,7 @@ function batch_MAP18(varargin)
               'Check if cfg_MAP18 is in the MATLAB path.']));	
 	end
 
-    %% Check MAP18
+    %% Check MAP18 and SPM12
     fprintf('Checking MAP18 installation\n');
     try
         check_fields(map18_cfg, {'map18'});
@@ -115,24 +115,46 @@ function batch_MAP18(varargin)
         map18_cfg.map18.param.norm = 'Gent_PrismaFit_T1';
     end
 
-    map18_m = ls(fullfile(map18_cfg.map18.path, 'map18.m'));
+	% Check MAP18 path
+    map18_path = fullfile(map18_cfg.map18.path, 'MAP18_for_SPM12', 'MAP18_Program');
+	map18_m = ls(fullfile(map18_path, 'map18.m'));
     
     if isempty(map18_m)
-		error('MAP18:batch_MAP18', 'No valid MAP18 installation found in folder %s, bailing out!', map18_cfg.map18.path);
+		error('MAP18:batch_MAP18', 'No valid MAP18 installation found in folder %s, bailing out!', map18_path);
     end
     
-	%% Adding MAP18 folder to path
+	% Adding MAP18 to path
     path_cell = regexp(path, pathsep, 'split');
     if ispc  % Windows is not case-sensitive
-        on_path = any(strcmpi(map18_cfg.map18.path, path_cell));
+        on_path = any(strcmpi(map18_path, path_cell));
     else
-        on_path = any(strcmp(map18_cfg.map18.path, path_cell));
+        on_path = any(strcmp(map18_path, path_cell));
     end
     
     if ~on_path
-        addpath(map18_cfg.map18.path)
+        addpath(map18_path);
+    end
+	
+	% Check SPM12 path
+    spm12_path = fullfile(map18_cfg.map18.path, 'spm12')
+	spm12_m = ls(fullfile(spm12_path, 'spm.m'));
+    
+    if isempty(spm12_m)
+		error('MAP18:batch_MAP18', 'No valid SPM12 installation found in folder %s, bailing out!', spm12_path);
     end
     
+	% Adding SPM12  to path
+    path_cell = regexp(path, pathsep, 'split');
+    if ispc  % Windows is not case-sensitive
+        on_path = any(strcmpi(spm12_path, path_cell));
+    else
+        on_path = any(strcmp(spm12_path, path_cell));
+    end
+    
+    if ~on_path
+        addpath(spm12_path);
+    end
+	
     %% Check for test flag
     fprintf('Checking input arguments\n');
     if nargin>=4
