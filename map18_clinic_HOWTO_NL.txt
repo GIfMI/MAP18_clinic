@@ -32,12 +32,13 @@ B. Opstarten software
 C. CONVERSIE DICOM NAAR NIfTI
 ==============================================================================================
 1.	Selecteer/Deselecteer 'Delete files' naar keuze
-2.	Klik 'Prepare data'
-3.	Selecteer de patienten (enkel op patientennaam, Shift of Ctrl + Linkermuis voor meerdere selecties)
-4.	Klik 'Open'
-5. 	Controleer de configuratie in het Matlab venster
-6. 	Klik 'Ok'
-7.	De conversie start, output in het Matlab venster
+2.	Selecteer/Deselecteer 'FLAIR WBA' naar keuze
+3.	Klik 'Prepare data'
+4.	Selecteer de patienten (enkel op patientennaam, Shift of Ctrl + Linkermuis voor meerdere selecties)
+5.	Klik 'Open'
+6. 	Controleer de configuratie in het Matlab venster
+7. 	Klik 'Ok'
+8.	De conversie start, output in het Matlab venster
 
 ==============================================================================================
 MAP18 Analyse

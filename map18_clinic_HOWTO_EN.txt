@@ -32,10 +32,13 @@ B. Start the software
 C. CONVERSION FROM DICOM TO NIfTI
 ==============================================================================================
 1.	Select/Deselect 'Delete files' as desired
-2.	Click 'Prepare data'
-3.	Select the subjects (just subject name, use Shift or Ctrl + left-click for multiple selections)
-4.	Click 'Open'
-5.	The conversion starts, output in the Matlab command window
+2.  Select/Deselect 'FLAIR WBA' as desired
+3.	Click 'Prepare data'
+4.	Select the subjects (just subject name, use Shift or Ctrl + left-click for multiple selections)
+5.	Click 'Open'
+6. 	Check the configuration in the Matlab command window
+7. 	Click 'Ok'
+8.	The conversion starts, output in the Matlab command window
 
 ==============================================================================================
 MAP18 Analysis
