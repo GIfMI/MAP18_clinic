@@ -12,6 +12,8 @@ function prepare_MAP18(varargin)
     %   * moves the files to '<subject>/MAP'
     %   * renames MPRAGE images to T1 and FLAIRD3D to FLAIR (depends on seqmap, see below)
     %   * deletes other NIfTI files if flagged
+    %   * adds a an incremental counter to the end if the file already
+    %     exists
     %   * calculates age of subject at scan date and creates folder '<subject>/age <age>'
     %
     % Syntax:  prepare_MAP18(subject_path, subjects, map18_cfg, delete_files)
@@ -27,20 +29,40 @@ function prepare_MAP18(varargin)
     %
     %    map18_cfg: (struct) with configuration for the script
     %       if empty, the default provided cfg_MAP18 is run
-	%		Required fields 
-    %             map18_cfg.d2n.path = root folder of dcm2niix;
-    %             map18_cfg.d2n.exe = 'dcm2niix';
-    %             map18_cfg.d2n.options = '-f %n_%t_%3s_%p -v n -o'
     %
-    %             map18_cfg.seqmap(i).protocol = '_<protocol_name>'
-    %             map18_cfg.seqmap(i).sequence = '_<sequence_name>'
-    %             map18_cfg.seqmap(i).contrast = '_<contrast>'
-    %		Optional fields
-    %             map18_cfg.subject_path: absolute path to subject folder (default: pwd)
-    %			  map18_cfg.prep.delete_files: flag to delete unmapped files
-	%                                          overriden if provided as an argument (default: false)
+    %       === DATA SPECIFIC ===
+    %        map18_cfg.subject_path = absolute path to subject folder
+    %               if empty, calling script should deal with it
+    %
+    %       === DICOM CONVERSION SPECIFIC ===
+    %       --- DCM2NIIX
+    %       map18_cfg.d2n.path = root folder of dcm2niix;
+    %       map18_cfg.d2n.exe = 'dcm2niix';
+    %       map18_cfg.d2n.options = '-f %n_%t_%3s_%p -v n -o'
+    %
+    %       --- SEQUENCE MAPPING
+    %       map18_cfg.seqmap(i).protocol = '_<protocol_name>'
+    %       map18_cfg.seqmap(i).sequence = '_<sequence_name>'
+    %       map18_cfg.seqmap(i).contrast = '_<contrast>'
+    %    
+    %       --- REGEXP FOR MAPPING
+    %       map18_cfg.prep.regexp: (string) regular expression used to match files from
+    %                              DICOM to NIfTI converter
+    %                              depends on  map18_cfg.d2n.options
+    %                              must contain one %s for the contrast name
+    %                              '([^s].*)(%s)(_WBA)?([a-z])?$'
+    %
+    %       --- FLAGS FOR CONVERSION/CLEANING
+    %       map18_cfg.prep.delete_files: flag to delete unmapped files (default: false)
+	%               overriden if provided as an argument     
+    %       map18_cfg.prep.flair_wba: flag to run a FLAIR whole brain analysis (default: true)
+	%               if true, the suffix _WBA will be added to the FLAIR nii file     
+    %               overriden if provided as an argument
 	%
-    %     delete_files: (logical) flag to delete unmapped files, (default: false)
+    %    delete_files: (logical) flag to delete unmapped files, overrides flag in map18_cfg.prep(default: false)
+    %
+    %    flair_wba: (logical) flag to run a FLAIR whole brain analyis, overrides flag in map18_cfg.prep(default: true)	
+    %           if true, the suffix _WBA will be added to the FLAIR nii file    
     %
     % Outputs:
     %     none
@@ -55,7 +77,7 @@ function prepare_MAP18(varargin)
     % Corneel Heymanslaan 10 | 9000 Ghent | BELGIUM
     % email: pieter.vandemaele@ugent.be
     % Website: http://gifmi.ugent.be
-    % January 2020; Last revision: 12-January-2020
+    % January 2020; Last revision: 19-February-2020
     
     tic
     fprintf('%s\n', repmat('=' , [1,80]));
@@ -134,7 +156,6 @@ function prepare_MAP18(varargin)
     
     %% Check sequence mapping
     fprintf('Checking sequence mapping\n');
-    tic
     try
         check_fields(map18_cfg, 'seqmap');
     catch exception
@@ -154,8 +175,14 @@ function prepare_MAP18(varargin)
 		    error('MAP18:prepare_MAP18', 'Sequence mapping %i misses a required field, bailing out!', i);
         end
     end
-    toc
    
+    %% Check for regular expression
+    try
+        check_fields(map18_cfg.prep, {'regexp'});
+    catch exception
+        error('MAP18:prepare_MAP18', 'A regular regular expression for filename matching is required, bailing out!');
+    end
+    
     %% Check for delete files flag
     fprintf('Checking input arguments\n');
     if nargin>=4
@@ -165,6 +192,17 @@ function prepare_MAP18(varargin)
             check_fields(map18_cfg.prep, {'delete_files'});
         catch exception
             map18_cfg.prep.delete_files = false;
+        end
+    end
+    
+    %% Check for flair_wba flag
+    if nargin>=5
+        map18_cfg.prep.flair_wba = logical(varargin{5});
+    else
+        try
+            check_fields(map18_cfg.prep, {'flair_wba'});
+        catch exception
+            map18_cfg.prep.flair_wba = true;
         end
     end
     
@@ -232,7 +270,6 @@ function prepare_MAP18(varargin)
         
         fprintf('\tConvert DICOM to NIFTI\n');
         % === Convert dicom to nifti
-        % dcm2niix already processes the data recursively
         d2n_command = sprintf('%s %s %s %s', fullfile(map18_cfg.d2n.path, map18_cfg.d2n.exe), map18_cfg.d2n.options, subject_map18_path, subject_dicom_path);
         [status, ~] = system(d2n_command);
         
@@ -249,7 +286,7 @@ function prepare_MAP18(varargin)
         end
         
         % === Filtering and Renaming
-        mapped = arrayfun(@(f) check_mapping_and_rename(f, map18_cfg.seqmap, map18_cfg.prep.delete_files), all_files);
+        mapped = arrayfun(@(f) check_mapping_and_rename(f, map18_cfg.seqmap, map18_cfg.prep), all_files);
         map_log = horzcat(mapped, map_log);
         
         % === Create age folder
@@ -269,6 +306,7 @@ function prepare_MAP18(varargin)
         
         % extract DOB from dicom
         date_birth = datetime(dcminfo.PatientBirthDate,'InputFormat','yyyyMMdd');
+		
         % extract date of scan
         date_scan = datetime(dcminfo.AcquisitionDate,'InputFormat','yyyyMMdd');
         
@@ -295,9 +333,6 @@ function prepare_MAP18(varargin)
         % fprintf('Mapped files with suffix only: %d\n', numel(find(map_log==2)));
         % fprintf('Mapped files with counter only: %d\n', numel(find(map_log==3)));
     end
-    % disp('After renaming:')
-    % nii = dir(fullfile(subject_map18_path, '*.nii'));
-    % disp({nii.name}')
     
     fprintf('\n');
     fprintf('Finished at %s\n', datetime);
@@ -305,61 +340,48 @@ function prepare_MAP18(varargin)
     fprintf('\n');
 end
 
-function mapped = check_mapping_and_rename(f, seqmap, delete_files)
+function mapped = check_mapping_and_rename(f, seqmap, prep)
     mapped = 0;
-    % disp(' ')
-    % disp('------------------------------------------------------------------------------------------------------------------------------')
-    % fprintf('\t\tRenaming file %s\n', f.name)
+
     for i=1:numel(seqmap)
-        % disp(sprintf('\nFile: %s | Pattern: %s', f.name, seqmap(i).sequence))
         [~, fname, fext] = fileparts(f.name);
-        
-        expr = sprintf('([^s].*)(%s)([a-z])?(_\\d)?$', seqmap(i).contrast);
         output_file = f.name;
-        % expr = sprintf('([^s].*)(%s)([a-z])?$', seqmap(i).contrast);
+        
+        expr = sprintf(strcat(prep.regexp, '(_\\d)?$'), seqmap(i).contrast);
         tokens = regexp(fname, expr, 'tokens');
         
         % Check if file already matches
         if ~isempty(tokens)
-            % fprintf('>>>>>>> File %s already exists, skipping!\n', fullfile(f.folder, output_file));
             mapped = 1;
             break
         end
         
-        expr = sprintf('([^s].*)(%s)([a-z])?$', seqmap(i).sequence);
-        
+        expr = sprintf(strcat(prep.regexp, '$'), seqmap(i).sequence);
         tokens = regexp(fname, expr, 'tokens');
         
         if ~isempty(tokens)
             mapped = 1;
-            % fprintf('\nMatching pattern: %s\n', seqmap(i).sequence)
             prefix = tokens{1}{1};
-            %sequence = tokens{1}{2};
-            suffix = tokens{1}{3};
+            sequence = tokens{1}{2};
+            suffix = tokens{1}{4};
             contrast = seqmap(i).contrast;
             output_file = fname;
-            
-            % fprintf('\tprefix = %s | sequence = %s | suffix = %s\n', prefix, sequence, suffix);
-            
             output_file = sprintf('%s%s', prefix, contrast);
             
-            % fprintf('\tinput file  = %s\n', f.name);
-            % fprintf('\toutput file = %s\n', output_file);
+            if ~isempty(regexp(contrast, 'FLAIR$', 'match', 'once')) && prep.flair_wba
+                output_file = sprintf('%s_WBA', output_file);
+            end
             
             % build file with suffix
             if ~isempty(suffix)
-                % fprintf('\toutput file must have a suffix\n');
                 output_file = sprintf('%s%s', output_file, suffix);
                 mapped = 2;
             end
-            % fprintf('\toutput file = %s\n', output_file);
             
             cnt = 1;
             output_file2 = output_file;
             while true
-                % fprintf('\t\tchecking for file %s\n', [output_file2 , fext])
                 if isfile(fullfile(f.folder, [output_file2 , fext]))
-                    % fprintf('\t\t\tFile already exists, increment counter\n')
                     output_file2 = sprintf('%s_%d', output_file, cnt);
                     cnt = cnt+1;
                 else
@@ -368,14 +390,14 @@ function mapped = check_mapping_and_rename(f, seqmap, delete_files)
                     break;
                 end
             end
-            % fprintf('\tfinal output file = %s\n', output_file);
+
             fprintf('\t\tMove file %s to %s\n', f.name, [output_file, fext]);
             movefile(fullfile(f.folder, f.name), fullfile(f.folder, [output_file, fext]));
             break
         end
     end
     
-    if ~mapped && delete_files
+    if ~mapped && prep.delete_files
         fprintf('\t\tDeleting %s\n', fullfile(f.folder, f.name))
         mapped = 4;
         delete(fullfile(f.folder, f.name))

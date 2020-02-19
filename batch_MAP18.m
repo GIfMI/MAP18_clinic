@@ -21,11 +21,22 @@ function batch_MAP18(varargin)
     %
     %    map18_cfg: struct with configuration data for the script
     %       if empty, the default provided cfg_MAP18 is run
-    %             map18_cfg.subject_path = absolute path to subject folder
-    %             map18_cfg.map18.path = absolute path to the MAP18 installation 
-	%			      (<PATH to MAP18>\MATLAB-Programs')
-    %             map18_cfg.map18.param.norm = normal database (default: 'Gent_PrismaFit_T1')
-    %             map18_cfg.map18.test_run = do a test_run (default: false)
+    %
+    %       === DATA SPECIFIC ===
+    %       map18_cfg.subject_path = absolute path to subject folder
+    %               if empty, calling script should deal with it
+    %
+    %       === MAP18 SPECIFIC ===
+    %       --- MAP18 LOCATION
+    %       map18_cfg.map18.path = absolute path to the MAP18 installation 
+	%            (<PATH to MAP18>\MATLAB-Programs')
+    %
+    %       --- MAP18 PARAMETERS
+    %       map18_cfg.map18.param.norm = normal database (default: 'Gent_PrismaFit_T1')
+    %
+    %       --- BATCH TEST
+    %       map18_cfg.map18.test_run = flag to do a test_run (default: false)
+	%               overriden if provided as an argument    
     %
     % Outputs:
     %     none
@@ -40,7 +51,7 @@ function batch_MAP18(varargin)
     % Corneel Heymanslaan 10 | 9000 Ghent | BELGIUM
     % email: pieter.vandemaele@ugent.be
     % Website: http://gifmi.ugent.be
-    % January 2020; Last revision: 13-January-2020 
+    % January 2020; Last revision: 19-February-2020 
     
 	%% Start time logging
     tic
