@@ -22,7 +22,7 @@ function out_var = get_var_name(in_var)
     % Corneel Heymanslaan 10 | 9000 Ghent | BELGIUM
     % email: pieter.vandemaele@ugent.be
     % Website: http://gifmi.ugent.be
-    % January 2020; Last revision: 14-January-2020
+    % January 2020; Last revision: 19-February-2020
     
     if ischar(in_var)
         out_var = in_var;
