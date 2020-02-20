@@ -76,13 +76,13 @@ function batch_MAP18(varargin)
             map18_cfg = cfg_MAP18;
         catch exception
 			fprintf('%s: %s\n', exception.identifier, exception.message);
-            error('MAP18:batch_MAP18', sprintf(['There are issues with the configuration file.\n', ...
-                'Check if cfg_MAP18 is in the MATLAB path.']));
+            error('MAP18:batch_MAP18', ['There are issues with the configuration file.\n', ...
+                'Check if cfg_MAP18 is in the MATLAB path.']);
         end
         
         if ~exist('map18_cfg', 'var')
-            error('MAP18:batch_MAP18', sprintf(['There are issues with the configuration file.\n', ...
-                'Check if map18_cfg is defined in the cfg_MAP18_kliniek.m file.']));
+            error('MAP18:batch_MAP18', ['There are issues with the configuration file.\n', ...
+                'Check if map18_cfg is defined in the cfg_MAP18_kliniek.m file.']);
         end
     end
     
@@ -90,8 +90,8 @@ function batch_MAP18(varargin)
 		assert(isstruct(map18_cfg), 'MAP:batch_MAP18', 'map18_cfg is not a struct');
 	catch exception
 		fprintf('%s: %s\n', exception.identifier, exception.message);
-        error('MAP18:batch_MAP18', sprintf(['There are issues with the configuration file.\n', ...
-              'Check if cfg_MAP18 is in the MATLAB path.']));	
+        error('MAP18:batch_MAP18', ['There are issues with the configuration file.\n', ...
+              'Check if cfg_MAP18 is in the MATLAB path.']);	
 	end
 
     %% Check MAP18 and SPM12
@@ -112,7 +112,7 @@ function batch_MAP18(varargin)
     
     try 
         check_fields(map18_cfg.map18, {'param'});
-    catch exception
+    catch %exception
 		%fprintf('%s: %s\n', exception.identifier, exception.message);
 		fprintf('	No normal database found, defaults to %s\n', 'Gent_PrismaFit_T1')
         map18_cfg.map18.param.norm = 'Gent_PrismaFit_T1';
@@ -120,7 +120,7 @@ function batch_MAP18(varargin)
 
     try
         check_fields(map18_cfg.map18.param, {'norm'});
-    catch exception
+    catch %exception
 		%fprintf('%s: %s\n', exception.identifier, exception.message);
 		fprintf('	No normal database found, defaults to %s\n', 'Gent_PrismaFit_T1')
         map18_cfg.map18.param.norm = 'Gent_PrismaFit_T1';
@@ -147,7 +147,7 @@ function batch_MAP18(varargin)
     end
 	
 	% Check SPM12 path
-    spm12_path = fullfile(map18_cfg.map18.path, 'spm12')
+    spm12_path = fullfile(map18_cfg.map18.path, 'spm12');
 	spm12_m = ls(fullfile(spm12_path, 'spm.m'));
     
     if isempty(spm12_m)
@@ -173,7 +173,7 @@ function batch_MAP18(varargin)
     else
         try
             check_fields(map18_cfg.map18, {'test_run'});
-        catch exception
+        catch %exception
             map18_cfg.map18.test_run = false;
         end
     end
@@ -191,7 +191,7 @@ function batch_MAP18(varargin)
         map18_cfg.subject_path = varargin{1};
         try
             check_fields(map18_cfg, 'subject_path');
-        catch exception
+        catch %exception
             map18_cfg.subject_path = pwd;
         end
     end
@@ -216,8 +216,8 @@ function batch_MAP18(varargin)
 	
 	fprintf('Start processing subjects\n');
     
-    for subject_={subjects{:}}
-        subject_path = subject_{1};
+    for i=1:numel(subjects)
+        subject_path = subjects{i};
         
         [~, subject_name ] = fileparts(subject_path);
         fprintf('Processing subject %s\n', subject_name);

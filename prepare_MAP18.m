@@ -101,13 +101,13 @@ function prepare_MAP18(varargin)
             map18_cfg = cfg_MAP18;
         catch exception
 			fprintf('%s: %s\n', exception.identifier, exception.message);
-            error('MAP18:prepare_MAP18', sprintf(['There are issues with the configuration file.\n', ...
-                'Check if cfg_MAP18 is in the MATLAB path.']));
+            error('MAP18:prepare_MAP18', ['There are issues with the configuration file.\n', ...
+                'Check if cfg_MAP18 is in the MATLAB path.']);
         end
         
         if ~exist('map18_cfg', 'var')
-            error('MAP18:prepare_MAP18', sprintf(['There are issues with the configuration file.\n', ...
-                'Check if map18_cfg is defined in the cfg_MAP18_kliniek.m file.']));
+            error('MAP18:prepare_MAP18', ['There are issues with the configuration file.\n', ...
+                'Check if map18_cfg is defined in the cfg_MAP18_kliniek.m file.']);
         end
     end
     
@@ -115,8 +115,8 @@ function prepare_MAP18(varargin)
 		assert(isstruct(map18_cfg), 'MAP:prepare_MAP18', 'map18_cfg is not a struct');
 	catch exception
 		fprintf('%s: %s\n', exception.identifier, exception.message);
-        error('MAP18:prepare_MAP18', sprintf(['There are issues with the configuration file.\n', ...
-              'Check if cfg_MAP18 is in the MATLAB path.']));	
+        error('MAP18:prepare_MAP18', ['There are issues with the configuration file.\n', ...
+              'Check if cfg_MAP18 is in the MATLAB path.']);	
 	end
     
      %% Check preparation
@@ -190,7 +190,7 @@ function prepare_MAP18(varargin)
     else
         try
             check_fields(map18_cfg.prep, {'delete_files'});
-        catch exception
+        catch %exception
             map18_cfg.prep.delete_files = false;
         end
     end
@@ -201,7 +201,7 @@ function prepare_MAP18(varargin)
     else
         try
             check_fields(map18_cfg.prep, {'flair_wba'});
-        catch exception
+        catch %exception
             map18_cfg.prep.flair_wba = true;
         end
     end
@@ -219,7 +219,7 @@ function prepare_MAP18(varargin)
         map18_cfg.subject_path = varargin{1};
         try
             check_fields(map18_cfg, 'subject_path');
-        catch exception
+        catch %exception
             map18_cfg.subject_path = pwd;
         end
     end
@@ -245,8 +245,8 @@ function prepare_MAP18(varargin)
     map_log = [];
     
     %% LOOPING SUBJECTS
-    for subject_={subjects{:}}
-        subject_path = subject_{1};
+    for i=1:numel(subjects)
+        subject_path = subjects{i};    
         [~, subject_name ] = fileparts(subject_path);
         fprintf('Processing subject %s\n', subject_name);
         fprintf('\tWorking path: %s\n', subject_path);
@@ -345,7 +345,6 @@ function mapped = check_mapping_and_rename(f, seqmap, prep)
 
     for i=1:numel(seqmap)
         [~, fname, fext] = fileparts(f.name);
-        output_file = f.name;
         
         expr = sprintf(strcat(prep.regexp, '(_\\d)?$'), seqmap(i).contrast);
         tokens = regexp(fname, expr, 'tokens');
@@ -362,10 +361,9 @@ function mapped = check_mapping_and_rename(f, seqmap, prep)
         if ~isempty(tokens)
             mapped = 1;
             prefix = tokens{1}{1};
-            sequence = tokens{1}{2};
+            %sequence = tokens{1}{2};
             suffix = tokens{1}{4};
             contrast = seqmap(i).contrast;
-            output_file = fname;
             output_file = sprintf('%s%s', prefix, contrast);
             
             if ~isempty(regexp(contrast, 'FLAIR$', 'match', 'once')) && prep.flair_wba
