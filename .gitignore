@@ -1,6 +1,6 @@
 # Local folders
-dcm2nii
-manual
+dcm2nii/
+manual/
 
 # Windows default autosave extension
 *.asv
