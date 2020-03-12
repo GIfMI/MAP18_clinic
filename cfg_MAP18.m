@@ -64,7 +64,7 @@ function map18_cfg = cfg_MAP18()
     % January 2020; Last revision: 19-February-2020     
     
     % === DATA SPECIFIC ===
-    map18_cfg.subject_path = 'D:\Projects\MAP18_clinic\Patienten_test\';
+    map18_cfg.subject_path = 'D:\Projects\MAP18_clinic\Patienten\';
     
     % === MAP18 SPECIFIC ===
     % --- MAP18 LOCATION

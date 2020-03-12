@@ -58,18 +58,19 @@ function map18_kliniek
     % Default GUI element dimensions
     btn_width = 100;
     %btn_height = 22;
-    btn_margin = 30;
+    btn_margin = 20;
     cbx_height = 30;
     
     % Calculate button heights
-    btn_height = floor((fig_pos(4)- 3*btn_margin - 2*cbx_height)/2);
+    btn_height = floor((fig_pos(4)- 3*btn_margin - 3*cbx_height)/2);
     %btn_height = floor((fig_pos(4)- 3*btn_margin)/2);
     btn_width = fig_pos(3)-2*btn_margin;
     btn_left = btn_margin;
     
     % Preparation GUI elements
-    btn_prep_bottom = 2*btn_margin+btn_height+2*cbx_height;
-    cbx_prep_bottom = btn_prep_bottom - cbx_height;
+    btn_prep_bottom = 2*btn_margin+btn_height+3*cbx_height;
+    cbx_prep_delete_files_bottom = btn_prep_bottom - cbx_height;
+    cbx_prep_flair_wba_bottom = btn_prep_bottom - 2*cbx_height;
     try
         check_fields(map18_cfg, {'prep'});
         try check_fields(map18_cfg.prep, {'delete_files'});
@@ -79,6 +80,17 @@ function map18_kliniek
         end
     catch exception
         flag_delete_files = true;
+    end
+    
+    try
+        check_fields(map18_cfg, {'prep'});
+        try check_fields(map18_cfg.prep, {'flair_wba'});
+            flag_flair_wba = map18_cfg.prep.flair_wba;
+        catch exception
+            throw(exception)
+        end
+    catch exception
+        flag_flair_wba = true;
     end
     
     % Batch processing GUI elements
@@ -98,19 +110,23 @@ function map18_kliniek
     %% Build GUI
     % PREPARE
     cbx_prep_delete_files = uicheckbox(fig, 'Text','Delete files',...
-                  'Value', flag_delete_files,...
-                  'Position',[btn_left, cbx_prep_bottom, btn_width, cbx_height]);
-
+        'Value', flag_delete_files,...
+        'Position',[btn_left, cbx_prep_delete_files_bottom, btn_width, cbx_height]);
+    
+    cbx_prep_flair_wba = uicheckbox(fig, 'Text','FLAIR wba',...
+        'Value', flag_flair_wba,...
+        'Position',[btn_left, cbx_prep_flair_wba_bottom, btn_width, cbx_height]);
+    
     btn_prepare_map18 = uibutton(fig,'push',...
         'Text', 'Prepare data', ...
         'Position',[btn_left, btn_prep_bottom, btn_width, btn_height],...
-        'ButtonPushedFcn', @(btn,event) prepare_MAP18('', '', map18_cfg, cbx_prep_delete_files.Value));
+        'ButtonPushedFcn', @(btn,event) prepare_MAP18('', '', map18_cfg, cbx_prep_delete_files.Value, cbx_prep_flair_wba.Value));
     
     % BATCH PROCESS
     cbx_batch_test_run = uicheckbox(fig, 'Text','Test run',...
-                  'Value', flag_test_run,...
-                  'Position',[btn_left, cbx_batch_bottom, btn_width, cbx_height]);
-
+        'Value', flag_test_run,...
+        'Position',[btn_left, cbx_batch_bottom, btn_width, cbx_height]);
+    
     btn_batch_map18 = uibutton(fig,'push',...
         'Text', 'Batch analysis', ...
         'Position',[btn_left, btn_batch_bottom, btn_width, btn_height],...
